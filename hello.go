@@ -5,28 +5,41 @@ import (
 	"encoding/json"
 )
 
-type people struct {
-	Number int `json:"number"`
-	Msg string `json:"message"`
-	Peo string `json:"people"`
-}
-/*
-type dude struct {
-	Name string `json:"name"`
-}
-*/
+
 func main() {
-	text := `{"people": [{"craft": "ISS", "name":"Sergey Rizhikov"}, {"craft": "ISS", "name": "AndreyBorisenko"}, {"craft": "ISS", "name": "ShaneKimbrough"}, {"craft": "ISS", "name": "Oleg Novitskiy"},{"craft": "ISS", "name": "Thomas Pesquet"}, {"craft":"ISS", "name": "Peggy Whitson"}], "message": "success","number": 6}`
+	var v interface{}
+
+
+	text := `{"people": [{"craft": "ISS", "name":"Sergey Rizhikov"}, 
+	{"craft": "ISS", "name": "AndreyBorisenko"}, 
+	{"craft": "ISS", "name": "ShaneKimbrough"}, 
+	{"craft": "ISS", "name": "Oleg Novitskiy"},
+	{"craft": "ISS", "name": "Thomas Pesquet"}, 
+	{"craft":"ISS", "name": "Peggy Whitson"}], 
+	"message": "success",
+	"number": 6}`
+
 
 	textBytes := []byte(text)
-	people1 := people{}
-	err := json.Unmarshal(textBytes, &people1)
+	err := json.Unmarshal(textBytes, &v)
+	data := v.(map[string]interface{})
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("error: ",err)
 		return
 	}
-	fmt.Println(people1.Number)
-	fmt.Println("spacer")
-	fmt.Println(people1.Msg)
-fmt.Println(people1.Peo)
+	for k, v := range data {
+		switch v := v.(type) {
+		case string:
+			fmt.Println(k, v, "(string)")
+		case float64:
+			fmt.Println(k, v, "(float64)")
+		case []interface{}:
+			fmt.Println(k, "(array):")
+			for i, u := range v {
+				fmt.Println("    ", i, u)
+			}
+		default:
+			fmt.Println(k, v, "(unknown)")
+		}
+	}
 }
